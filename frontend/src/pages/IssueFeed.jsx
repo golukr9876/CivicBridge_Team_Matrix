@@ -86,7 +86,11 @@ export default function IssueFeed() {
               return (
                 <div
                   key={issue._id}
-                  className="rounded-2xl border border-white/10 bg-white/95 shadow-xl overflow-hidden"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/issues/${issue._id}`)}
+                  onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && navigate(`/issues/${issue._id}`)}
+                  className="rounded-2xl border border-white/10 bg-white/95 shadow-xl overflow-hidden cursor-pointer hover:shadow-2xl hover:border-white/20 transition"
                 >
                   <div className="p-5 sm:p-6 flex flex-col gap-3">
                     {/* User and time */}
@@ -111,10 +115,10 @@ export default function IssueFeed() {
 
                     {/* Content */}
                     <div>
-                      <h2 className="text-lg font-bold text-slate-900 mb-1">
+                      <h2 className="text-lg font-bold text-slate-900 mb-1 hover:text-orange-600 transition">
                         {issue.title}
                       </h2>
-                      <p className="text-slate-700 text-sm">{issue.description}</p>
+                      <p className="text-slate-700 text-sm line-clamp-2">{issue.description}</p>
                       {issue.address && (
                         <p className="text-xs text-slate-500 mt-1">
                           📍 {issue.address}
@@ -129,8 +133,11 @@ export default function IssueFeed() {
                       )}
                     </div>
 
-                    {/* Upvote, location and status */}
-                    <div className="flex items-center justify-between flex-wrap gap-2 pt-3 border-t border-slate-200">
+                    {/* Upvote, location and status - stop propagation so clicking doesn't open detail */}
+                    <div
+                      className="flex items-center justify-between flex-wrap gap-2 pt-3 border-t border-slate-200"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="flex items-center gap-2 flex-wrap">
                         {mapsUrl && (
                           <a
@@ -138,13 +145,17 @@ export default function IssueFeed() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-medium text-orange-600 hover:bg-orange-50 transition"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <span className="text-xl">📍</span>
                             View location
                           </a>
                         )}
                         <button
-                          onClick={() => handleUpvote(issue._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpvote(issue._id);
+                          }}
                           disabled={upvoteLoading === issue._id || upvoted}
                           className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition disabled:opacity-70 disabled:cursor-not-allowed ${
                             upvoted
@@ -161,6 +172,13 @@ export default function IssueFeed() {
                             <span className="text-xs text-slate-400">...</span>
                           )}
                         </button>
+                        <Link
+                          to={`/issues/${issue._id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition"
+                        >
+                          View full details →
+                        </Link>
                       </div>
                       <span className="px-3 py-1.5 text-xs rounded-full bg-slate-100 text-slate-700 font-semibold">
                         {issue.status}
