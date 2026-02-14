@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { isAllowedOfficial } = require("../utils/allowedOfficials");
 
 // REGISTER
 exports.register = async (req, res) => {
@@ -10,6 +11,16 @@ exports.register = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Only users listed in allowed-officials.csv can sign up as OFFICIAL
+    if (role === "OFFICIAL") {
+      if (!isAllowedOfficial(email, name)) {
+        return res.status(403).json({
+          message:
+            "You are not authorized to sign up as an Official. Your email and username must be in the allowed list.",
+        });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
