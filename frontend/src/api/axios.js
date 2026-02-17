@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://civicbridge-team-matrix-1.onrender.com",
+  baseURL: "https://civicbridge-team-matrix-5icy.onrender.com/",
 });
 
 api.interceptors.request.use((config) => {
