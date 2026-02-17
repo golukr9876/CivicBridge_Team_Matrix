@@ -8,10 +8,7 @@ const timelineRoutes = require("./routes/timeline.routes");
 const app = express();
 
 // app.use(cors());
-app.use(cors({
-  origin: "https://civicbridge.vercel.app",
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
